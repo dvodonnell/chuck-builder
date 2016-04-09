@@ -1,0 +1,25 @@
+{
+  "name": "chuck-builder",
+  "version": "1.0.0",
+  "description": "A pretty good front-end builder.",
+  "main": "index.js",
+  "dependencies": {
+    "buildify": "^0.4.0",
+    "chokidar": "^1.4.3",
+    "node-sass": "^3.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dvodonnell/chuck-builder.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dvodonnell/chuck-builder/issues"
+  },
+  "homepage": "https://github.com/dvodonnell/chuck-builder#readme"
+}
