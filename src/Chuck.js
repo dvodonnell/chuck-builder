@@ -49,6 +49,8 @@ var Chuck = {
 
             var cmds = lines[i].trim().split(/\s+/);
 
+            var importCnt = 0;
+
             if (cmds[0] === 'import') {
 
                 var ns = eval(cmds[3]);
@@ -56,6 +58,8 @@ var Chuck = {
                 var resPath = null;
 
                 if (ns.charAt(0) === '.') {
+
+                    //path-based import
 
                     var currPath = path.dirname(fpath);
 
@@ -67,6 +71,8 @@ var Chuck = {
                     }
 
                 } else {
+
+                    //namespace-based import
 
                     try {
                         resPath = eval('map.'+distKey+'.'+ns);
@@ -105,7 +111,8 @@ var Chuck = {
                     if (modules.indexOf(resPath) > -1) {
                         modules = Chuck._move(modules, modules.indexOf(resPath), 0);
                     } else {
-                        modules.unshift(resPath);
+                        modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
+                        //modules.unshift(resPath);
                         if (compile) {
                             var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns);
                             modules = innerProc.modules;
@@ -122,6 +129,8 @@ var Chuck = {
 
                         }
                     }
+
+                    importCnt++;
 
                 }
 
