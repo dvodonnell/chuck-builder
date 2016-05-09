@@ -45,11 +45,11 @@ var Chuck = {
 
         var lines = contents.split(';');
 
+        var importCnt = 0;
+
         for (var i = 0; i < lines.length; i++) {
 
             var cmds = lines[i].trim().split(/\s+/);
-
-            var importCnt = 0;
 
             if (cmds[0] === 'import') {
 
