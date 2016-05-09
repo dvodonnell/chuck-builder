@@ -2,23 +2,144 @@ var chokidar = require('chokidar'),
     sass = require('node-sass'),
     fs = require('fs');
 
+var path = require('path');
+
 var Chuck = {
 
     build : function(config, distKey) {
 
-        var jsOut = '';
+        var dets = this._processFile(config.entry, config.map, distKey, [config.entry], {}, 'App');
 
-        if (config.sources) {
-            jsOut = Chuck._concatinate(config.sources, distKey);
+        var contents = 'var _G = {};';
+
+        for (var i = 0; i < dets.modules.length; i++) {
+            contents += dets.moduleContents[dets.modules[i]];
         }
 
-        jsOut = '(function(root,factory){ if (typeof module === "object" && module.exports) { module.exports = factory(); } else { root["'+config.products.jsObj+'"] = factory(); } })(this,function(){' + jsOut + ' return g.use("'+config.products.jsEndpoint+'"); });';
+        fs.writeFileSync(config.out, contents, 'utf8');
 
-        fs.writeFile(config.paths.js + '/' + config.products.js, jsOut);
+    },
 
-        if (config.scss) {
-            Chuck._sass(config.scss, config.paths.css + '/' + config.products.css);
+    _move : function(arr, old_index, new_index) {
+
+        if (new_index >= arr.length) {
+            var k = new_index - arr.length;
+            while ((k--) + 1) {
+                arr.push(undefined);
+            }
         }
+        arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+        return arr; // for testing purposes
+
+    },
+
+    _processFile : function(fpath, map, distKey, modules, moduleContents, moduleKeyName) {
+
+        var modules = modules || [],
+            moduleContents = moduleContents || {};
+
+        var contents = fs.readFileSync(fpath, 'utf8'),
+            compiledLines = [],
+            depNS = [],
+            depVars = [];
+
+        var lines = contents.split(';');
+
+        for (var i = 0; i < lines.length; i++) {
+
+            var cmds = lines[i].trim().split(/\s+/);
+
+            if (cmds[0] === 'import') {
+
+                var ns = eval(cmds[3]);
+
+                var resPath = null;
+
+                if (ns.charAt(0) === '.') {
+
+                    var currPath = path.dirname(fpath);
+
+                    try {
+                        fs.statSync(currPath + '/' + ns);
+                        resPath = currPath + '/' + ns;
+                    } catch (e) {
+                        console.log('Resource specified by relative path to ' + currPath + '/' + ns + ' not found.');
+                    }
+
+                } else {
+
+                    try {
+                        resPath = eval('map.'+distKey+'.'+ns);
+                    } catch (e) {
+                        try {
+                            resPath = eval('map.common.'+ns);
+                        } catch (e) {
+                            console.log(ns + ' is not set in the resource map for dist '+distKey+'.');
+                        }
+                    }
+
+                }
+
+                if (resPath) {
+
+                    var compile = true,
+                        mappingVar = null;
+
+                    if (typeof resPath === 'object') {
+
+                        if (resPath.pristine) {
+                            compile = false;
+                        }
+
+                        if (resPath.mappingVar) {
+                            mappingVar = resPath.mappingVar;
+                        }
+
+                        resPath = resPath.path;
+
+                    }
+
+                    depVars.push(cmds[1]);
+                    depNS.push(ns);
+
+                    if (modules.indexOf(resPath) > -1) {
+                        modules = Chuck._move(modules, modules.indexOf(resPath), 0);
+                    } else {
+                        modules.unshift(resPath);
+                        if (compile) {
+                            var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns);
+                            modules = innerProc.modules;
+                            moduleContents = innerProc.moduleContents;
+                        } else {
+
+                            var rawContents = fs.readFileSync(resPath, 'utf8');
+
+                            if (mappingVar) {
+                                rawContents += "_G['" + ns + "'] = " + mappingVar + ";";
+                            }
+
+                            moduleContents[resPath] = rawContents;
+
+                        }
+                    }
+
+                }
+
+            } else if (cmds[0] === 'export') {
+
+                if (moduleKeyName) {
+                    compiledLines.push(lines[i].replace("export default", "_G['"+moduleKeyName+"'] ="));
+                }
+
+            } else {
+                compiledLines.push(lines[i]);
+            }
+
+        }
+
+        moduleContents[fpath] = '(function('+depVars.join(',')+'){' + compiledLines.join(";\n") + '})('+ ((depNS.length) ? '_G["'+depNS.join('"],_G["') + '"]' : '') +');';
+
+        return {modules : modules, moduleContents : moduleContents};
 
     },
 
