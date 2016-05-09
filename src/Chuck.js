@@ -111,7 +111,7 @@ var Chuck = {
                     if (modules.indexOf(resPath) > -1) {
                         modules = Chuck._move(modules, modules.indexOf(resPath), 0);
                     } else {
-                        modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
+                        modules.splice(importCnt, 0, resPath);
                         //modules.unshift(resPath);
                         if (compile) {
                             var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns);
