@@ -2,7 +2,7 @@
   "name": "chuck-builder",
   "version": "1.0.0",
   "description": "A pretty good front-end builder.",
-  "main": "index.js",
+  "main": "src/Chuck.js",
   "dependencies": {
     "babel-core": "^6.7.7",
     "babel-loader": "^6.2.4",
