@@ -8,7 +8,7 @@ var Chuck = {
 
     build : function(config, distKey) {
 
-        var dets = this._processFile(config.entry, config.map, distKey, [config.entry], {}, 'App');
+        var dets = this._processFile(config.entry, config.map, distKey, [config.entry], {}, 'App', config.verbose || false);
 
         var contents = 'var _G = {};';
 
@@ -33,7 +33,7 @@ var Chuck = {
 
     },
 
-    _processFile : function(fpath, map, distKey, modules, moduleContents, moduleKeyName) {
+    _processFile : function(fpath, map, distKey, modules, moduleContents, moduleKeyName, verbose) {
 
         var modules = modules || [],
             moduleContents = moduleContents || {};
@@ -110,11 +110,17 @@ var Chuck = {
 
                     if (modules.indexOf(resPath) > -1) {
                         modules = Chuck._move(modules, modules.indexOf(resPath), 0);
+                        if (verbose) {
+                            console.log('Moving ' + resPath + ' to 0');
+                        }
                     } else {
                         modules.splice(importCnt, 0, resPath);
+                        if (verbose) {
+                            console.log('Adding ' + resPath + ' to ' + importCnt);
+                        }
                         //modules.unshift(resPath);
                         if (compile) {
-                            var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns);
+                            var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose);
                             modules = innerProc.modules;
                             moduleContents = innerProc.moduleContents;
                         } else {
