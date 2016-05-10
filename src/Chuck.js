@@ -8,13 +8,15 @@ var Chuck = {
 
     build : function(config, distKey) {
 
-        var dets = this._processFile(config.entry, config.map, distKey, [config.entry], {}, 'App', config.verbose || false);
+        var dets = this._processFile(config.entry, config.map, distKey, [config.entry], {}, config.exportAs || 'App', config.verbose || false);
 
         var contents = 'var _G = {};';
 
         for (var i = 0; i < dets.modules.length; i++) {
-            contents += dets.moduleContents[dets.modules[i]];
+            contents += dets.moduleContents[dets.modules[i]] + "\n";
         }
+
+        contents += "var " + config.exportAs || 'App' + " = _G['" + config.exportAs || 'App' + "']";
 
         fs.writeFileSync(config.out, contents, 'utf8');
 
