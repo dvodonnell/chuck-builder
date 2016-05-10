@@ -16,7 +16,7 @@ var Chuck = {
             contents += dets.moduleContents[dets.modules[i]] + "\n";
         }
 
-        contents += "var " + config.exportAs || 'App' + " = _G['" + config.exportAs || 'App' + "']";
+        contents += "var " + (config.exportAs || 'App') + " = _G['" + (config.exportAs || 'App') + "']";
 
         fs.writeFileSync(config.out, contents, 'utf8');
 
