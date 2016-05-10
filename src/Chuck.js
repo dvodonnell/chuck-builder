@@ -109,10 +109,10 @@ var Chuck = {
                     depNS.push(ns);
 
                     if (modules.indexOf(resPath) > -1) {
-                        modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
+                        /*modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
                         if (verbose) {
                             console.log('Moving ' + resPath + ' to ' + importCnt);
-                        }
+                        }*/
                     } else {
                         modules.splice(importCnt, 0, resPath);
                         if (verbose) {
