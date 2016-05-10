@@ -109,9 +109,9 @@ var Chuck = {
                     depNS.push(ns);
 
                     if (modules.indexOf(resPath) > -1) {
-                        modules = Chuck._move(modules, modules.indexOf(resPath), 0);
+                        modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
                         if (verbose) {
-                            console.log('Moving ' + resPath + ' to 0');
+                            console.log('Moving ' + resPath + ' to ' + importCnt);
                         }
                     } else {
                         modules.splice(importCnt, 0, resPath);
@@ -121,6 +121,7 @@ var Chuck = {
                         //modules.unshift(resPath);
                         if (compile) {
                             var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose);
+                            importCnt = importCnt + innerProc.importCnt;
                             modules = innerProc.modules;
                             moduleContents = innerProc.moduleContents;
                         } else {
@@ -154,7 +155,7 @@ var Chuck = {
 
         moduleContents[fpath] = '(function('+depVars.join(',')+'){' + compiledLines.join(";\n") + '})('+ ((depNS.length) ? '_G["'+depNS.join('"],_G["') + '"]' : '') +');';
 
-        return {modules : modules, moduleContents : moduleContents};
+        return {modules : modules, moduleContents : moduleContents, importCnt : importCnt};
 
     },
 
