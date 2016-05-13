@@ -118,7 +118,7 @@ var Chuck = {
                     } else {
                         modules.splice(importCnt, 0, resPath);
                         if (verbose) {
-                            console.log('Adding ' + resPath + ' to ' + importCnt);
+                            console.log('Adding ' + resPath + ' to ' + importCnt, modules.length);
                         }
                         //modules.unshift(resPath);
                         if (compile) {
