@@ -169,6 +169,8 @@ var Chuck = {
 
         moduleContents[fpath] = '(function('+depVars.join(',')+'){' + compiledLines.join(";\n") + '})('+ ((depNS.length) ? '_G["'+depNS.join('"],_G["') + '"]' : '') +');';
 
+        console.log(modules, '---');
+
         return {modules : modules, moduleContents : moduleContents};
 
     },
