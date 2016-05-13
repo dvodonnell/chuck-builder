@@ -12,8 +12,13 @@ var Chuck = {
 
         var contents = 'var _G = {};';
 
+        var addedModules = [];
+
         for (var i = 0; i < dets.modules.length; i++) {
-            contents += dets.moduleContents[dets.modules[i]] + "\n";
+            if (addedModules.indexOf(dets.modules[i]) < 0) {
+                contents += dets.moduleContents[dets.modules[i]] + "\n";
+                addedModules.push(dets.modules[i]);
+            }
         }
 
         contents += "var " + (config.exportAs || 'App') + " = _G['" + (config.exportAs || 'App') + "']";
@@ -47,7 +52,7 @@ var Chuck = {
 
         var lines = contents.split(';');
 
-        var importCnt = 0;
+        //var importCnt = 0;
 
         for (var i = 0; i < lines.length; i++) {
 
@@ -116,19 +121,22 @@ var Chuck = {
                             console.log('Moving ' + resPath + ' to ' + importCnt);
                         }*/
                     //} else {
-                        if (modules.indexOf(resPath) > -1) {
+                        /*if (modules.indexOf(resPath) > -1) {
                             modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
                         } else {
                             modules.splice(importCnt, 0, resPath);
                             importCnt++;
-                        }
+                        }*/
+
+                        modules.unshift(resPath);
+
                         if (verbose) {
-                            console.log('Adding ' + resPath + ' to ' + importCnt, modules.length);
+                            //console.log('Adding ' + resPath + ' to ' + importCnt, modules.length);
                         }
                         //modules.unshift(resPath);
                         if (compile) {
                             var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose);
-                            importCnt = importCnt + innerProc.importCnt;
+                            //importCnt = importCnt + innerProc.importCnt;
                             modules = innerProc.modules;
                             moduleContents = innerProc.moduleContents;
                         } else {
@@ -161,7 +169,7 @@ var Chuck = {
 
         moduleContents[fpath] = '(function('+depVars.join(',')+'){' + compiledLines.join(";\n") + '})('+ ((depNS.length) ? '_G["'+depNS.join('"],_G["') + '"]' : '') +');';
 
-        return {modules : modules, moduleContents : moduleContents, importCnt : importCnt};
+        return {modules : modules, moduleContents : moduleContents};
 
     },
 
