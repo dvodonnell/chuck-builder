@@ -115,46 +115,25 @@ var Chuck = {
                     depVars.push(cmds[1]);
                     depNS.push(ns);
 
-                    //if (modules.indexOf(resPath) > -1) {
-                        /*modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
-                        if (verbose) {
-                            console.log('Moving ' + resPath + ' to ' + importCnt);
-                        }*/
-                    //} else {
-                        /*if (modules.indexOf(resPath) > -1) {
-                            modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
-                        } else {
-                            modules.splice(importCnt, 0, resPath);
-                            importCnt++;
-                        }*/
+                    modules.splice(importCnt, 0, resPath);
+                    importCnt++;
 
-                        modules.splice(importCnt, 0, resPath);
-                        importCnt++;
+                    if (compile) {
+                        var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose);
+                        importCnt = importCnt + innerProc.importCnt;
+                        modules = innerProc.modules;
+                        moduleContents = innerProc.moduleContents;
+                    } else {
 
-                        //modules.unshift(resPath);
+                        var rawContents = fs.readFileSync(resPath, 'utf8');
 
-                        if (verbose) {
-                            //console.log('Adding ' + resPath + ' to ' + importCnt, modules.length);
+                        if (mappingVar) {
+                            rawContents += "_G['" + ns + "'] = " + mappingVar + ";";
                         }
-                        //modules.unshift(resPath);
-                        if (compile) {
-                            var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose);
-                            importCnt = importCnt + innerProc.importCnt;
-                            modules = innerProc.modules;
-                            moduleContents = innerProc.moduleContents;
-                        } else {
 
-                            var rawContents = fs.readFileSync(resPath, 'utf8');
+                        moduleContents[resPath] = rawContents;
 
-                            if (mappingVar) {
-                                rawContents += "_G['" + ns + "'] = " + mappingVar + ";";
-                            }
-
-                            moduleContents[resPath] = rawContents;
-
-                        }
-                    //}
-
+                    }
 
                 }
 
