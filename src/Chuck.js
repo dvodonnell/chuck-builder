@@ -137,9 +137,9 @@ var Chuck = {
                             moduleContents[resPath] = rawContents;
 
                         }
+                        importCnt++;
                     }
 
-                    importCnt++;
 
                 }
 
