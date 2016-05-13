@@ -120,6 +120,7 @@ var Chuck = {
                             modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
                         } else {
                             modules.splice(importCnt, 0, resPath);
+                            importCnt++;
                         }
                         if (verbose) {
                             console.log('Adding ' + resPath + ' to ' + importCnt, modules.length);
@@ -141,7 +142,6 @@ var Chuck = {
                             moduleContents[resPath] = rawContents;
 
                         }
-                        importCnt++;
                     //}
 
 
