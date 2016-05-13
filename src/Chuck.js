@@ -110,13 +110,17 @@ var Chuck = {
                     depVars.push(cmds[1]);
                     depNS.push(ns);
 
-                    if (modules.indexOf(resPath) > -1) {
+                    //if (modules.indexOf(resPath) > -1) {
                         /*modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
                         if (verbose) {
                             console.log('Moving ' + resPath + ' to ' + importCnt);
                         }*/
-                    } else {
-                        modules.splice(importCnt, 0, resPath);
+                    //} else {
+                        if (modules.indexOf(resPath) > -1) {
+                            modules = Chuck._move(modules, modules.indexOf(resPath), importCnt);
+                        } else {
+                            modules.splice(importCnt, 0, resPath);
+                        }
                         if (verbose) {
                             console.log('Adding ' + resPath + ' to ' + importCnt, modules.length);
                         }
@@ -138,7 +142,7 @@ var Chuck = {
 
                         }
                         importCnt++;
-                    }
+                    //}
 
 
                 }
