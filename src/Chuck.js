@@ -52,7 +52,7 @@ var Chuck = {
 
         var lines = contents.split(';');
 
-        //var importCnt = 0;
+        var importCnt = 0;
 
         for (var i = 0; i < lines.length; i++) {
 
@@ -128,7 +128,10 @@ var Chuck = {
                             importCnt++;
                         }*/
 
-                        modules.unshift(resPath);
+                        modules.splice(importCnt, 0, resPath);
+                        importCnt++;
+
+                        //modules.unshift(resPath);
 
                         if (verbose) {
                             //console.log('Adding ' + resPath + ' to ' + importCnt, modules.length);
@@ -136,7 +139,7 @@ var Chuck = {
                         //modules.unshift(resPath);
                         if (compile) {
                             var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose);
-                            //importCnt = importCnt + innerProc.importCnt;
+                            importCnt = importCnt + innerProc.importCnt;
                             modules = innerProc.modules;
                             moduleContents = innerProc.moduleContents;
                         } else {
@@ -171,7 +174,7 @@ var Chuck = {
 
         console.log(modules, '---');
 
-        return {modules : modules, moduleContents : moduleContents};
+        return {modules : modules, moduleContents : moduleContents, importCnt : importCnt};
 
     },
 
