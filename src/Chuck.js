@@ -37,6 +37,9 @@ var Chuck = {
                 data : stylesContents
             });
 
+            console.log(config.callingDir);
+            console.log(stylesContents);
+
             sass.render({
                 data : stylesContents,
                 includePaths : [config.callingDir]
