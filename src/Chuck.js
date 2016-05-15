@@ -8,7 +8,9 @@ var Chuck = {
 
     build : function(config, distKey) {
 
-        var dets = this._processFile(config.entry, config.map, distKey, [config.entry], {}, config.exportAs || 'App', config.verbose || false);
+        var dets = this._processFile(config.entry, config.map, distKey, [config.entry], {}, config.exportAs || 'App', config.verbose || false, {
+            distConfig : config.distConfig
+        });
 
         var contents = 'var _G = {};';
 
@@ -65,7 +67,7 @@ var Chuck = {
 
     },
 
-    _processFile : function(fpath, map, distKey, modules, moduleContents, moduleKeyName, verbose) {
+    _processFile : function(fpath, map, distKey, modules, moduleContents, moduleKeyName, verbose, buildProducts) {
 
         var modules = modules || [],
             moduleContents = moduleContents || {};
@@ -106,14 +108,22 @@ var Chuck = {
 
                     //namespace-based import
 
-                    try {
-                        resPath = eval('map.'+distKey+'.'+ns);
-                    } catch (e) {
+                    if (buildProducts[ns]) {
+
+                        resPath = ns;
+
+                    } else {
+
                         try {
-                            resPath = eval('map.common.'+ns);
+                            resPath = eval('map.'+distKey+'.'+ns);
                         } catch (e) {
-                            console.log(ns + ' is not set in the resource map for dist '+distKey+'.');
+                            try {
+                                resPath = eval('map.common.'+ns);
+                            } catch (e) {
+                                console.log(ns + ' is not set in the resource map for dist '+distKey+'.');
+                            }
                         }
+
                     }
 
                 }
@@ -143,11 +153,17 @@ var Chuck = {
                     modules.splice(importCnt, 0, resPath);
                     importCnt++;
 
-                    if (compile) {
-                        var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose);
+                    if (buildProducts[resPath]) {
+
+                        moduleContents[resPath] = "_G['" + ns + "'] = " + buildProducts[resPath] + ";";
+
+                    } else if (compile) {
+
+                        var innerProc = Chuck._processFile(resPath, map, distKey, modules, moduleContents, ns, verbose, buildProducts);
                         importCnt = importCnt + innerProc.importCnt;
                         modules = innerProc.modules;
                         moduleContents = innerProc.moduleContents;
+
                     } else {
 
                         var rawContents = fs.readFileSync(resPath, 'utf8');
