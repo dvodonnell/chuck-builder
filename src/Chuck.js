@@ -37,7 +37,18 @@ var Chuck = {
                 data : stylesContents
             });
 
-            fs.writeFileSync(config.stylesOut, result.css, 'utf8');
+            sass.render({
+                data : stylesContents,
+                includePaths : [config.callingDir]
+            }, function(err, result) {
+
+                if (err) {
+                    console.log(err);
+                } else {
+                    fs.writeFileSync(config.stylesOut, result.css, 'utf8');
+                }
+
+            });
 
         }
 
