@@ -30,27 +30,22 @@ var Chuck = {
             var stylesContents = '';
 
             for (var i = 0; i < config.styles.length; i++) {
-                stylesContents += "@import '" + config.styles[0] + "';\n";
+                stylesContents += "@import '" + config.styles[i] + "';\n";
             }
 
             var result = sass.renderSync({
                 data : stylesContents
             });
 
-            console.log(config.callingDir);
-            console.log(stylesContents);
-
             sass.render({
                 data : stylesContents,
                 includePaths : [config.callingDir]
             }, function(err, result) {
-
                 if (err) {
                     console.log(err);
                 } else {
                     fs.writeFileSync(config.stylesOut, result.css, 'utf8');
                 }
-
             });
 
         }
