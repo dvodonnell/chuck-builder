@@ -37,7 +37,7 @@ var Chuck = {
                 data : stylesContents
             });
 
-            fs.writeFileSync(config.stylesOut, result, 'utf8');
+            fs.writeFileSync(config.stylesOut, result.css, 'utf8');
 
         }
 
