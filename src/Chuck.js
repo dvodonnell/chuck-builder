@@ -115,9 +115,15 @@ var Chuck = {
                     } else {
 
                         try {
+                            if (verbose) {
+                                console.log('Looking for ' + ns + ' in ' + 'map.'+distKey+'.'+ns);
+                            }
                             resPath = eval('map.'+distKey+'.'+ns);
                         } catch (e) {
                             try {
+                                if (verbose) {
+                                    console.log('Looking for ' + ns + ' in ' + 'map.common.'+ns);
+                                }
                                 resPath = eval('map.common.'+ns);
                             } catch (e) {
                                 console.log(ns + ' is not set in the resource map for dist '+distKey+'.');
@@ -191,8 +197,6 @@ var Chuck = {
         }
 
         moduleContents[fpath] = '(function('+depVars.join(',')+'){' + compiledLines.join(";\n") + '})('+ ((depNS.length) ? '_G["'+depNS.join('"],_G["') + '"]' : '') +');';
-
-        console.log(modules, '---');
 
         return {modules : modules, moduleContents : moduleContents, importCnt : importCnt};
 
