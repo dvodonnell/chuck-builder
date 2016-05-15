@@ -1,6 +1,6 @@
 {
   "name": "chuck-builder",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "A pretty good front-end builder.",
   "main": "src/Chuck.js",
   "dependencies": {
