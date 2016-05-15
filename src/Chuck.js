@@ -1,7 +1,7 @@
 var chokidar = require('chokidar'),
     sass = require('node-sass'),
     fs = require('fs'),
-    lodash = require('lodash');
+    _ = require('lodash');
 
 var path = require('path');
 
