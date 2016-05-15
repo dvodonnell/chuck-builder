@@ -25,6 +25,22 @@ var Chuck = {
 
         fs.writeFileSync(config.out, contents, 'utf8');
 
+        if (config.styles) {
+
+            var stylesContents = '';
+
+            for (var i = 0; i < config.styles.length; i++) {
+                stylesContents += "@import '" + config.styles[0] + "';\n";
+            }
+
+            var result = sass.renderSync({
+                data : stylesContents
+            });
+
+            fs.writeFileSync(config.stylesOut, result, 'utf8');
+
+        }
+
     },
 
     _move : function(arr, old_index, new_index) {
