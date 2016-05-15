@@ -155,7 +155,7 @@ var Chuck = {
 
                     if (buildProducts[resPath]) {
 
-                        moduleContents[resPath] = "_G['" + ns + "'] = " + buildProducts[resPath] + ";";
+                        moduleContents[resPath] = "_G['" + ns + "'] = " + JSON.stringify(buildProducts[resPath]) + ";";
 
                     } else if (compile) {
 
