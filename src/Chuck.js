@@ -1,6 +1,7 @@
 var chokidar = require('chokidar'),
     sass = require('node-sass'),
-    fs = require('fs');
+    fs = require('fs'),
+    lodash = require('lodash');
 
 var path = require('path');
 
@@ -114,7 +115,15 @@ var Chuck = {
 
                     } else {
 
-                        try {
+                        if (_.get(map, distKey + '.' + ns)) {
+                            resPath = eval('map.'+distKey+'.'+ns);
+                        } else if (_.get(map, 'common.' + ns)) {
+                            resPath = eval('map.common.'+ns);
+                        } else {
+                            console.log(ns + ' is not set in the resource map for dist '+distKey+'.');
+                        }
+
+                        /*try {
                             if (verbose) {
                                 console.log('Looking for ' + ns + ' in ' + 'map.'+distKey+'.'+ns);
                             }
@@ -128,7 +137,7 @@ var Chuck = {
                             } catch (e) {
                                 console.log(ns + ' is not set in the resource map for dist '+distKey+'.');
                             }
-                        }
+                        }*/
 
                     }
 
